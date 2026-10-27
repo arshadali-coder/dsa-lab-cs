@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Generate a personalized PDF report for the Data Structure Lab double-ended queue assignment." />
+  <title>Deque Lab Report Generator</title>
+  <style>
+    :root { color-scheme: light; --ink:#172033; --muted:#667085; --line:#e5e7eb; --brand:#4f46e5; --bg:#f5f7fb; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); }
+    .topbar { padding:18px 24px; background:#111827; color:#fff; }
+    .topbar-inner { max-width:1050px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand { font-weight:800; letter-spacing:-.03em; font-size:1.1rem; }
+    .badge { font-size:.78rem; border:1px solid #475569; border-radius:999px; padding:6px 10px; color:#dbeafe; }
+    main { max-width:1050px; margin:38px auto; padding:0 20px 40px; }
+    .hero { margin-bottom:24px; }
+    .eyebrow { color:var(--brand); text-transform:uppercase; letter-spacing:.12em; font-weight:800; font-size:.75rem; }
+    h1 { font-size:clamp(2rem, 5vw, 3rem); line-height:1.05; letter-spacing:-.05em; margin:10px 0 12px; }
+    .hero p { max-width:690px; color:var(--muted); line-height:1.65; margin:0; }
+    .layout { display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(300px, .95fr); gap:22px; align-items:start; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:20px; padding:25px; box-shadow:0 8px 30px rgba(16,24,40,.04); }
+    h2 { font-size:1.15rem; margin:0 0 18px; letter-spacing:-.02em; }
+    .field { margin-bottom:16px; }
+    label { display:block; font-weight:700; font-size:.9rem; margin-bottom:7px; }
+    input, select { width:100%; padding:12px 13px; border:1px solid #d0d5dd; border-radius:10px; font:inherit; background:#fff; color:var(--ink); outline:none; }
+    input:focus, select:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,70,229,.12); }
+    .hint { color:var(--muted); font-size:.8rem; line-height:1.5; margin-top:6px; }
+    button { width:100%; border:0; border-radius:11px; padding:14px 16px; font:inherit; font-weight:800; cursor:pointer; background:var(--brand); color:#fff; transition:transform .12s ease, background .12s ease; }
+    button:hover { background:#4338ca; transform:translateY(-1px); }
+    button:disabled { opacity:.65; cursor:wait; transform:none; }
+    .preview-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+    .preview-title h2 { margin:0; }
+    .live { font-size:.75rem; color:#047857; background:#ecfdf3; border-radius:999px; padding:5px 9px; font-weight:800; }
+    .paper { border:1px solid #e5e7eb; background:#fff; border-radius:12px; padding:22px; min-height:370px; }
+    .paper .small { color:#667085; font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; font-weight:800; }
+    .paper h3 { font-size:1.35rem; line-height:1.2; margin:12px 0; }
+    .paper p, .paper li { font-size:.88rem; line-height:1.6; color:#475467; }
+    .paper hr { border:0; border-top:1px solid #eaecf0; margin:18px 0; }
+    .paper .meta { font-size:.82rem; color:#344054; line-height:1.8; }
+    .notice { margin-top:18px; padding:13px 14px; border-radius:11px; background:#fffaeb; color:#854d0e; font-size:.82rem; line-height:1.55; border:1px solid #fedf89; }
+    footer { text-align:center; color:#98a2b3; font-size:.8rem; padding:0 20px 28px; }
+    @media (max-width:780px) { .layout { grid-template-columns:1fr; } main { margin-top:26px; } .card { padding:20px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">DS Lab Tools</div>
+      <div class="badge">CSL-302 · Semester III</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Data Structure Lab · 27 October 2026</div>
+      <h1>Deque Lab Report Generator</h1>
+      <p>Enter your student details to generate a personalized PDF report explaining the array-based Double Ended Queue (Deque) program, function by function. The PDF is generated in your browser; your details are not sent to a server.</p>
+    </section>
+
+    <div class="layout">
+      <section class="card">
+        <h2>Student details</h2>
+        <form id="reportForm">
+          <div class="field">
+            <label for="name">Student name</label>
+            <input id="name" name="name" type="text" placeholder="Enter your full name" maxlength="100" required />
+          </div>
+          <div class="field">
+            <label for="roll">Roll number</label>
+            <input id="roll" name="roll" type="text" placeholder="e.g. 26BCS001" maxlength="30" pattern="[A-Za-z0-9_-]+" title="Use letters, numbers, hyphens, or underscores only." required />
+            <div class="hint">This will be used as the PDF filename, for example: 26BCS001.pdf</div>
+          </div>
+          <div class="field">
+            <label for="branch">Branch / class</label>
+            <input id="branch" name="branch" type="text" value="B.Tech Computer Engineering — 2nd Year" maxlength="120" required />
+          </div>
+          <div class="field">
+            <label for="course">Course / lab</label>
+            <input id="course" name="course" type="text" value="Data Structure Lab (CSL-302)" maxlength="120" required />
+          </div>
+          <div class="field">
+            <label for="date">Assignment date</label>
+            <input id="date" name="date" type="text" value="27 October 2026" maxlength="40" required />
+          </div>
+          <button id="downloadBtn" type="submit">Generate and download PDF</button>
+        </form>
+        <div class="notice"><strong>Important:</strong> Use this as a report template. Review it against your own C implementation, update any details that differ, and make sure you can explain each function in your viva.</div>
+      </section>
+
+      <aside class="card">
+        <div class="preview-title">
+          <h2>Report preview</h2>
+          <span class="live">Live template</span>
+        </div>
+        <div class="paper">
+          <div class="small">Data Structure Lab · CSL-302</div>
+          <h3>Implementation of a Double Ended Queue Using an Array in C</h3>
+          <div class="meta"><strong>Student:</strong> <span id="previewName">Your name</span><br />
+            <strong>Roll number:</strong> <span id="previewRoll">Your roll number</span><br />
+            <strong>Class:</strong> <span id="previewBranch">B.Tech Computer Engineering — 2nd Year</span><br />
+            <strong>Date:</strong> <span id="previewDate">27 October 2026</span></div>
+          <hr />
+          <p><strong>Objective:</strong> Implement a menu-driven Deque that supports insertion and deletion at both ends, retrieving front/rear elements, display, and empty/full checks.</p>
+          <p><strong>Core idea:</strong> A Deque is a linear data structure in which insertion and deletion can happen at either end. A circular array allows the available array positions to be reused efficiently.</p>
+          <p><strong>Functions covered:</strong> Insertfront, InsertRear, Deletefront, DeleteRear, getFront, getRear, display, IsEmpty, IsFull, and main/menu loop.</p>
+          <p><strong>Report sections:</strong> objective, data representation, function-by-function working, menu flow, complexity, and testing checklist.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>Runs locally in your browser · No student details are uploaded</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrm2VekA2e6fJj6yL9bQ3nV0c5JxYx1yG5fXq5VQ5gYxgY5Y5y5Y5Y5Y5Y5Y5Y5" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    const form = document.getElementById('reportForm');
+    const fields = ['name', 'roll', 'branch', 'course', 'date'];
+    const defaults = { name: 'Your name', roll: 'Your roll number', branch: 'B.Tech Computer Engineering — 2nd Year', course: 'Data Structure Lab (CSL-302)', date: '27 October 2026' };
+
+    function updatePreview() {
+      fields.forEach((id) => {
+        const value = document.getElementById(id).value.trim() || defaults[id];
+        const target = document.getElementById('preview' + id.charAt(0).toUpperCase() + id.slice(1));
+        if (target) target.textContent = value;
+      });
+    }
+    fields.forEach((id) => document.getElementById(id).addEventListener('input', updatePreview));
+
+    function addWrapped(doc, text, x, y, maxWidth, lineHeight = 6) {
+      const lines = doc.splitTextToSize(text, maxWidth);
+      doc.text(lines, x, y);
+      return y + lines.length * lineHeight;
+    }
+
+    function addSection(doc, title, body, y) {
+      if (y > 255) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(45, 55, 72);
+      doc.text(title, 18, y);
+      y += 7;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(55, 65, 81);
+      y = addWrapped(doc, body, 18, y, 174, 5.2) + 5;
+      return y;
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('The PDF library did not load. Check your internet connection and reload the page.');
+        return;
+      }
+      const name = document.getElementById('name').value.trim();
+      const roll = document.getElementById('roll').value.trim();
+      const branch = document.getElementById('branch').value.trim();
+      const course = document.getElementById('course').value.trim();
+      const date = document.getElementById('date').value.trim();
+      if (!name || !roll || !branch || !course || !date) return;
+
+      const btn = document.getElementById('downloadBtn');
+      btn.disabled = true;
+      btn.textContent = 'Generating PDF…';
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        const pageWidth = 210;
+        let y = 20;
+
+        doc.setFillColor(30, 41, 59);
+        doc.rect(0, 0, pageWidth, 45, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text('DATA STRUCTURE LAB · CSL-302', 18, 15);
+        doc.setFontSize(18);
+        doc.text('DOUBLE ENDED QUEUE USING ARRAY', 18, 26);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text('Program working report · C language', 18, 35);
+        y = 56;
+
+        doc.setTextColor(31, 41, 55);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text('Student details', 18, y); y += 8;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        [
+          `Name: ${name}`,
+          `Roll number: ${roll}`,
+          `Class: ${branch}`,
+          `Course: ${course}`,
+          `Assignment date: ${date}`
+        ].forEach(line => { doc.text(line, 18, y); y += 6; });
+        y += 4;
+
+        y = addSection(doc, '1. Objective', 'To write a menu-driven C program that implements a Double Ended Queue (Deque) using an array. The program allows insertion and deletion at both the front and rear, access to the front and rear elements, display of elements, and checks for empty and full conditions.', y);
+        y = addSection(doc, '2. Concept and data representation', 'A Deque is a linear data structure in which elements can be inserted and removed from either end. A circular array is a practical implementation because it reuses positions freed by deletion. The program typically maintains an array deque[MAX], along with front and rear indices. An empty Deque may be represented by front = -1 and rear = -1. The exact conditions should match the submitted implementation.', y);
+        y = addSection(doc, '3. IsEmpty()', 'Purpose: determine whether the Deque contains no elements. Parameters: none, apart from any global array state used by the program. Return value: true/1 when the Deque is empty, otherwise false/0. Logic: check the chosen empty-state condition, commonly front == -1. This check prevents deletion or element access from an empty Deque.', y);
+        y = addSection(doc, '4. IsFull()', 'Purpose: determine whether another element can be inserted. Parameters: none, apart from the Deque state and capacity. Return value: true/1 when full, otherwise false/0. Logic: for a circular array, the Deque is full when (front == 0 && rear == MAX - 1) or (front == rear + 1). This avoids overwriting existing elements.', y);
+        y = addSection(doc, '5. Insertfront()', 'Purpose: insert a new value at the front. Input/parameter: the value to insert (commonly read inside the function or passed as an argument). Return value: often none/void; an implementation may return a status. Logic: first check IsFull(). If empty, set front and rear to 0. Otherwise, move front one position backward with circular wrap-around (front == 0 ? MAX - 1 : front - 1), then store the value at deque[front].', y);
+        y = addSection(doc, '6. InsertRear()', 'Purpose: insert a new value at the rear. Input/parameter: the value to insert (read inside the function or passed as an argument). Return value: often none/void; an implementation may return a status. Logic: first check IsFull(). If empty, initialize front = rear = 0. Otherwise, advance rear circularly (rear == MAX - 1 ? 0 : rear + 1), then store the value at deque[rear].', y);
+        y = addSection(doc, '7. Deletefront()', 'Purpose: remove the element at the front. Parameters: none. Return value: often none/void; some implementations return the removed value or a status. Logic: check IsEmpty() first. If there is one element (front == rear), reset both indices to -1. Otherwise, advance front circularly (front == MAX - 1 ? 0 : front + 1).', y);
+        y = addSection(doc, '8. DeleteRear()', 'Purpose: remove the element at the rear. Parameters: none. Return value: often none/void; some implementations return the removed value or a status. Logic: check IsEmpty() first. If there is one element, reset front and rear to -1. Otherwise, move rear one position backward with wrap-around (rear == 0 ? MAX - 1 : rear - 1).', y);
+        y = addSection(doc, '9. getFront()', 'Purpose: read the element at the front without removing it. Parameters: none. Return value: the front element, or a status/error indication if empty. Logic: call/check IsEmpty(); if not empty, return or print deque[front].', y);
+        y = addSection(doc, '10. getRear()', 'Purpose: read the element at the rear without removing it. Parameters: none. Return value: the rear element, or a status/error indication if empty. Logic: call/check IsEmpty(); if not empty, return or print deque[rear].', y);
+        y = addSection(doc, '11. display()', 'Purpose: print all Deque elements from front to rear. Parameters: none. Return value: usually none/void. Logic: check IsEmpty(); if not empty, start at front and move circularly until rear is reached, printing each element. A circular traversal must wrap from MAX - 1 to 0 when necessary.', y);
+        y = addSection(doc, '12. main() and menu loop', 'Purpose: control program execution and let the user choose an operation. Parameters: commonly int main(void), with no parameters. Return value: 0 on successful termination. Logic: initialize the Deque state, repeatedly display a menu, read the user’s choice, call the matching function using switch/case or an equivalent structure, handle invalid choices, and stop when Exit is selected. As required by the assignment, include exactly one printf statement in main that prints the student’s roll number and name; ensure every other function also has exactly one such printf statement if your instructor expects that literally.', y);
+        y = addSection(doc, '13. Menu options', '1. Insertfront()  |  2. InsertRear()  |  3. Deletefront()  |  4. DeleteRear()  |  5. getRear()  |  6. getFront()  |  7. display()  |  8. IsEmpty()  |  9. IsFull()  |  10. Exit.', y);
+        y = addSection(doc, '14. Time complexity', 'Insertion, deletion, getFront, getRear, IsEmpty, and IsFull take O(1) time when implemented with front/rear indices. Display takes O(n) time because it visits each stored element. The array uses O(MAX) space, where MAX is the fixed capacity.', y);
+        y = addSection(doc, '15. Testing checklist', 'Test insertion into an empty Deque; insertion at both ends; deletion from both ends; getFront/getRear on a non-empty Deque; display after multiple operations; deletion and access on an empty Deque; insertion until full; circular wrap-around; invalid menu choice; and Exit. Confirm that the output and boundary conditions match your own C source code.', y);
+        y = addSection(doc, '16. Conclusion', 'The array-based Deque supports insertion and deletion at both ends. Circular index updates allow efficient use of the array, while empty/full checks prevent invalid operations. Review this report against your actual program before submission.', y);
+
+        const pages = doc.getNumberOfPages();
+        for (let p = 1; p <= pages; p++) {
+          doc.setPage(p);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(120, 130, 145);
+          doc.text(`${roll} · ${name}`, 18, 287);
+          doc.text(`Page ${p} of ${pages}`, 192, 287, { align: 'right' });
+        }
+        const safeRoll = roll.replace(/[^A-Za-z0-9_-]/g, '_');
+        doc.save(`${safeRoll}.pdf`);
+      } catch (error) {
+        console.error(error);
+        alert('Could not generate the PDF. Please try again or reload the page.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate and download PDF';
+      }
+    });
+  </script>
+</body>
+</html>
