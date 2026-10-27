@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Generate a personalized PDF report for the Data Structure Lab double-ended queue assignment." />
-  <title>Deque Lab Report Generator</title>
+  <meta name="description" content="Generate a personalized C program and PDF report for the Data Structure Lab double-ended queue assignment." />
+  <title>Deque Assignment File Generator</title>
   <style>
     :root { color-scheme: light; --ink:#172033; --muted:#667085; --line:#e5e7eb; --brand:#4f46e5; --bg:#f5f7fb; }
     * { box-sizing: border-box; }
@@ -54,8 +54,8 @@
   <main>
     <section class="hero">
       <div class="eyebrow">Data Structure Lab · 27 October 2026</div>
-      <h1>Deque Lab Report Generator</h1>
-      <p>Enter your student details to generate a personalized PDF report explaining the array-based Double Ended Queue (Deque) program, function by function. The PDF is generated in your browser; your details are not sent to a server.</p>
+      <h1>Deque Assignment File Generator</h1>
+      <p>Enter your student details to generate both the personalized C program and a PDF report explaining its functions. Both files are generated in your browser; your details are not sent to a server.</p>
     </section>
 
     <div class="layout">
@@ -69,7 +69,14 @@
           <div class="field">
             <label for="roll">Roll number</label>
             <input id="roll" name="roll" type="text" placeholder="e.g. 26BCS001" maxlength="30" pattern="[A-Za-z0-9_-]+" title="Use letters, numbers, hyphens, or underscores only." required />
-            <div class="hint">This will be used as the PDF filename, for example: 26BCS001.pdf</div>
+            <div class="hint">This will be used for the filenames: your-roll-number.c or .cpp, and your-roll-number.pdf.</div>
+          </div>
+          <div class="field">
+            <label for="language">Programming language</label>
+            <select id="language" name="language" required>
+              <option value="c">C (.c)</option>
+              <option value="cpp">C++ (.cpp)</option>
+            </select>
           </div>
           <div class="field">
             <label for="branch">Branch / class</label>
@@ -83,9 +90,9 @@
             <label for="date">Assignment date</label>
             <input id="date" name="date" type="text" value="27 October 2026" maxlength="40" required />
           </div>
-          <button id="downloadBtn" type="submit">Generate and download PDF</button>
+          <button id="downloadBtn" type="submit">Generate and download both files</button>
         </form>
-        <div class="notice"><strong>Important:</strong> Use this as a report template. Review it against your own C implementation, update any details that differ, and make sure you can explain each function in your viva.</div>
+        <div class="notice"><strong>Important:</strong> The assignment asks for C. Choose C++ only if your instructor allows it. Review the generated source and report, and make sure you can explain each function in your viva.</div>
       </section>
 
       <aside class="card">
@@ -112,7 +119,7 @@
 
   <footer>Runs locally in your browser · No student details are uploaded</footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrm2VekA2e6fJj6yL9bQ3nV0c5JxYx1yG5fXq5VQ5gYxgY5Y5y5Y5Y5Y5Y5Y5Y5" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const form = document.getElementById('reportForm');
     const fields = ['name', 'roll', 'branch', 'course', 'date'];
@@ -126,6 +133,166 @@
       });
     }
     fields.forEach((id) => document.getElementById(id).addEventListener('input', updatePreview));
+
+    function cString(value) {
+      return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/[\r\n]/g, ' ');
+    }
+
+    function createCSource(roll, name) {
+      return `#include <stdio.h>
+#include <stdbool.h>
+
+#define CAPACITY 5
+#define ROLL "${roll}"
+#define STUDENT_NAME "${cString(name)}"
+
+static int deque[CAPACITY];
+static int front = -1;
+static int rear = -1;
+
+/* IsEmpty: no parameters; returns true when the deque is empty, otherwise false.
+   Checks the -1 empty-state marker. */
+bool IsEmpty(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    return front == -1;
+}
+
+/* IsFull: no parameters; returns true when all array positions are occupied.
+   Checks the two full-state conditions for a circular deque. */
+bool IsFull(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    return (front == 0 && rear == CAPACITY - 1) || (front == rear + 1);
+}
+
+/* Insertfront: reads an integer; returns nothing. Checks capacity, initializes
+   an empty deque or moves front backward circularly, then stores the value. */
+void Insertfront(void) {
+    int value;
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsFull()) { puts("Deque is full."); return; }
+    printf("Enter value: ");
+    if (scanf("%d", &value) != 1) { puts("Invalid input."); return; }
+    if (front == -1) front = rear = 0;
+    else if (front == 0) front = CAPACITY - 1;
+    else front--;
+    deque[front] = value;
+    puts("Inserted at front.");
+}
+
+/* InsertRear: reads an integer; returns nothing. Checks capacity, initializes
+   an empty deque or advances rear circularly, then stores the value. */
+void InsertRear(void) {
+    int value;
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsFull()) { puts("Deque is full."); return; }
+    printf("Enter value: ");
+    if (scanf("%d", &value) != 1) { puts("Invalid input."); return; }
+    if (front == -1) front = rear = 0;
+    else if (rear == CAPACITY - 1) rear = 0;
+    else rear++;
+    deque[rear] = value;
+    puts("Inserted at rear.");
+}
+
+/* Deletefront: no parameters or return value. Rejects empty state, prints the
+   removed item, resets indices for the last item or advances front circularly. */
+void Deletefront(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsEmpty()) { puts("Deque is empty."); return; }
+    printf("Deleted: %d\\n", deque[front]);
+    if (front == rear) front = rear = -1;
+    else if (front == CAPACITY - 1) front = 0;
+    else front++;
+}
+
+/* DeleteRear: no parameters or return value. Rejects empty state, prints the
+   removed item, resets indices for the last item or moves rear backward. */
+void DeleteRear(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsEmpty()) { puts("Deque is empty."); return; }
+    printf("Deleted: %d\\n", deque[rear]);
+    if (front == rear) front = rear = -1;
+    else if (rear == 0) rear = CAPACITY - 1;
+    else rear--;
+}
+
+/* getRear: no parameters or return value. Checks empty state, then prints the
+   rear element without deleting it. */
+void getRear(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsEmpty()) puts("Deque is empty."); else printf("Rear: %d\\n", deque[rear]);
+}
+
+/* getFront: no parameters or return value. Checks empty state, then prints the
+   front element without deleting it. */
+void getFront(void) {
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsEmpty()) puts("Deque is empty."); else printf("Front: %d\\n", deque[front]);
+}
+
+/* display: no parameters or return value. Traverses from front through rear,
+   using modulo capacity to wrap around, and prints every stored element. */
+void display(void) {
+    int i;
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    if (IsEmpty()) { puts("Deque is empty."); return; }
+    printf("Deque: ");
+    for (i = front; ; i = (i + 1) % CAPACITY) {
+        printf("%d ", deque[i]);
+        if (i == rear) break;
+    }
+    putchar('\\n');
+}
+
+/* main: no parameters; returns 0 after Exit. Prints student identity, repeats
+   the menu, dispatches operations, and handles invalid choices. */
+int main(void) {
+    int choice;
+    printf("Roll: %s | Name: %s\\n", ROLL, STUDENT_NAME);
+    do {
+        puts("\\n1.Insertfront 2.InsertRear 3.Deletefront 4.DeleteRear 5.getRear");
+        puts("6.getFront 7.display 8.IsEmpty 9.IsFull 10.Exit");
+        printf("Choice: ");
+        if (scanf("%d", &choice) != 1) { puts("Invalid input; exiting."); return 0; }
+        switch (choice) {
+            case 1: Insertfront(); break;
+            case 2: InsertRear(); break;
+            case 3: Deletefront(); break;
+            case 4: DeleteRear(); break;
+            case 5: getRear(); break;
+            case 6: getFront(); break;
+            case 7: display(); break;
+            case 8: puts(IsEmpty() ? "Deque is empty." : "Deque is not empty."); break;
+            case 9: puts(IsFull() ? "Deque is full." : "Deque is not full."); break;
+            case 10: puts("Exiting."); break;
+            default: puts("Invalid menu choice.");
+        }
+    } while (choice != 10);
+    return 0;
+}
+`;
+    }
+
+    function createSource(roll, name, language) {
+      const source = createCSource(roll, name);
+      if (language === 'cpp') {
+        // The C implementation uses the C standard I/O header and is also valid C++.
+        return source.replace('#include <stdbool.h>\n', '');
+      }
+      return source;
+    }
+
+    function downloadTextFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
 
     function addWrapped(doc, text, x, y, maxWidth, lineHeight = 6) {
       const lines = doc.splitTextToSize(text, maxWidth);
@@ -158,11 +325,12 @@
       const branch = document.getElementById('branch').value.trim();
       const course = document.getElementById('course').value.trim();
       const date = document.getElementById('date').value.trim();
+      const language = document.getElementById('language').value;
       if (!name || !roll || !branch || !course || !date) return;
 
       const btn = document.getElementById('downloadBtn');
       btn.disabled = true;
-      btn.textContent = 'Generating PDF…';
+      btn.textContent = 'Generating your files…';
       try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -179,7 +347,7 @@
         doc.text('DOUBLE ENDED QUEUE USING ARRAY', 18, 26);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
-        doc.text('Program working report · C language', 18, 35);
+        doc.text(`Program working report · ${language === 'cpp' ? 'C++' : 'C'} language`, 18, 35);
         y = 56;
 
         doc.setTextColor(31, 41, 55);
@@ -208,7 +376,7 @@
         y = addSection(doc, '9. getFront()', 'Purpose: read the element at the front without removing it. Parameters: none. Return value: the front element, or a status/error indication if empty. Logic: call/check IsEmpty(); if not empty, return or print deque[front].', y);
         y = addSection(doc, '10. getRear()', 'Purpose: read the element at the rear without removing it. Parameters: none. Return value: the rear element, or a status/error indication if empty. Logic: call/check IsEmpty(); if not empty, return or print deque[rear].', y);
         y = addSection(doc, '11. display()', 'Purpose: print all Deque elements from front to rear. Parameters: none. Return value: usually none/void. Logic: check IsEmpty(); if not empty, start at front and move circularly until rear is reached, printing each element. A circular traversal must wrap from MAX - 1 to 0 when necessary.', y);
-        y = addSection(doc, '12. main() and menu loop', 'Purpose: control program execution and let the user choose an operation. Parameters: commonly int main(void), with no parameters. Return value: 0 on successful termination. Logic: initialize the Deque state, repeatedly display a menu, read the user’s choice, call the matching function using switch/case or an equivalent structure, handle invalid choices, and stop when Exit is selected. As required by the assignment, include exactly one printf statement in main that prints the student’s roll number and name; ensure every other function also has exactly one such printf statement if your instructor expects that literally.', y);
+        y = addSection(doc, '12. main() and menu loop', 'Purpose: control program execution and let the user choose an operation. Parameters: none (int main(void)). Return value: 0 on normal exit. Logic: repeatedly display the menu, read the choice, dispatch to the selected function, handle invalid choices, and stop when Exit is selected. Every function, including main, contains exactly one printf statement that prints the student’s roll number and name, as required by the assignment.', y);
         y = addSection(doc, '13. Menu options', '1. Insertfront()  |  2. InsertRear()  |  3. Deletefront()  |  4. DeleteRear()  |  5. getRear()  |  6. getFront()  |  7. display()  |  8. IsEmpty()  |  9. IsFull()  |  10. Exit.', y);
         y = addSection(doc, '14. Time complexity', 'Insertion, deletion, getFront, getRear, IsEmpty, and IsFull take O(1) time when implemented with front/rear indices. Display takes O(n) time because it visits each stored element. The array uses O(MAX) space, where MAX is the fixed capacity.', y);
         y = addSection(doc, '15. Testing checklist', 'Test insertion into an empty Deque; insertion at both ends; deletion from both ends; getFront/getRear on a non-empty Deque; display after multiple operations; deletion and access on an empty Deque; insertion until full; circular wrap-around; invalid menu choice; and Exit. Confirm that the output and boundary conditions match your own C source code.', y);
@@ -224,15 +392,19 @@
           doc.text(`Page ${p} of ${pages}`, 192, 287, { align: 'right' });
         }
         const safeRoll = roll.replace(/[^A-Za-z0-9_-]/g, '_');
+        const sourceExtension = language === 'cpp' ? 'cpp' : 'c';
+        const sourceMime = language === 'cpp' ? 'text/x-c++src;charset=utf-8' : 'text/x-c;charset=utf-8';
+        downloadTextFile(`${safeRoll}.${sourceExtension}`, createSource(safeRoll, name, language), sourceMime);
         doc.save(`${safeRoll}.pdf`);
       } catch (error) {
         console.error(error);
         alert('Could not generate the PDF. Please try again or reload the page.');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Generate and download PDF';
+        btn.textContent = 'Generate and download both files';
       }
     });
   </script>
 </body>
 </html>
+
