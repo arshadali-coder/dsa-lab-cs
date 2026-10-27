@@ -124,6 +124,24 @@
     const form = document.getElementById('reportForm');
     const fields = ['name', 'roll', 'branch', 'course', 'date'];
     const defaults = { name: 'Your name', roll: 'Your roll number', branch: 'B.Tech Computer Engineering — 2nd Year', course: 'Data Structure Lab (CSL-302)', date: '27 October 2026' };
+    const reportThemes = [
+      { primary: [30, 41, 59], accent: [79, 70, 229], light: [238, 242, 255] },
+      { primary: [22, 78, 99], accent: [8, 145, 178], light: [236, 254, 255] },
+      { primary: [67, 56, 202], accent: [124, 58, 237], light: [245, 243, 255] },
+      { primary: [21, 94, 69], accent: [5, 150, 105], light: [236, 253, 245] },
+      { primary: [124, 45, 18], accent: [234, 88, 12], light: [255, 247, 237] },
+      { primary: [30, 64, 175], accent: [37, 99, 235], light: [239, 246, 255] },
+      { primary: [88, 28, 135], accent: [147, 51, 234], light: [250, 245, 255] },
+      { primary: [63, 63, 70], accent: [82, 82, 91], light: [250, 250, 250] },
+      { primary: [127, 29, 29], accent: [220, 38, 38], light: [254, 242, 242] },
+      { primary: [15, 76, 76], accent: [13, 148, 136], light: [240, 253, 250] },
+      { primary: [49, 46, 129], accent: [99, 102, 241], light: [238, 242, 255] },
+      { primary: [113, 63, 18], accent: [202, 138, 4], light: [254, 252, 232] },
+      { primary: [51, 65, 85], accent: [14, 165, 233], light: [240, 249, 255] },
+      { primary: [76, 29, 149], accent: [192, 38, 211], light: [253, 244, 255] },
+      { primary: [20, 83, 45], accent: [34, 197, 94], light: [240, 253, 244] }
+    ];
+    let reportTheme = reportThemes[0];
 
     function updatePreview() {
       fields.forEach((id) => {
@@ -294,6 +312,36 @@ int main(void) {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
+    function makeStudentExample(roll) {
+      const seed = Array.from(roll).reduce((value, char) => ((value * 31) + char.charCodeAt(0)) >>> 0, 7);
+      const values = [];
+      for (let i = 0; i < 5; i++) {
+        let value = ((seed >>> (i * 5)) + (seed % 97) + (i * 19)) % 90 + 10;
+        while (values.includes(value)) value = (value % 90) + 10;
+        values.push(value);
+      }
+      const [a, b, c, d, e] = values;
+      const traces = [
+        `InsertRear(${a}), Insertfront(${b}), InsertRear(${c}), getFront(), getRear(), Deletefront(), Insertfront(${d}), display(), DeleteRear(), InsertRear(${e}), display(), Deletefront(), DeleteRear(), DeleteRear(), IsEmpty().`,
+        `Insertfront(${a}), InsertRear(${b}), Insertfront(${c}), getRear(), getFront(), DeleteRear(), InsertRear(${d}), display(), Deletefront(), Insertfront(${e}), display(), DeleteRear(), Deletefront(), Deletefront(), IsEmpty().`,
+        `InsertRear(${a}), InsertRear(${b}), Insertfront(${c}), getFront(), DeleteRear(), Insertfront(${d}), InsertRear(${e}), display(), getRear(), Deletefront(), DeleteRear(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), Insertfront(${b}), InsertRear(${c}), getRear(), Deletefront(), InsertRear(${d}), Insertfront(${e}), display(), getFront(), DeleteRear(), Deletefront(), Deletefront(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), Insertfront(${b}), getRear(), InsertRear(${c}), Deletefront(), Insertfront(${d}), getFront(), InsertRear(${e}), display(), DeleteRear(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), Insertfront(${b}), InsertRear(${c}), DeleteRear(), Insertfront(${d}), getFront(), getRear(), Deletefront(), InsertRear(${e}), display(), DeleteRear(), Deletefront(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), InsertRear(${b}), Insertfront(${c}), Deletefront(), InsertRear(${d}), Insertfront(${e}), display(), getFront(), getRear(), DeleteRear(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), InsertRear(${b}), Insertfront(${c}), Deletefront(), Insertfront(${d}), InsertRear(${e}), getRear(), display(), DeleteRear(), getFront(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), InsertRear(${b}), InsertRear(${c}), getFront(), DeleteRear(), Insertfront(${d}), InsertRear(${e}), display(), getRear(), Deletefront(), DeleteRear(), Deletefront(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), Insertfront(${b}), Insertfront(${c}), getRear(), Deletefront(), InsertRear(${d}), Insertfront(${e}), display(), DeleteRear(), getFront(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), Insertfront(${b}), InsertRear(${c}), DeleteRear(), InsertRear(${d}), Insertfront(${e}), getFront(), display(), Deletefront(), getRear(), DeleteRear(), Deletefront(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), Insertfront(${b}), InsertRear(${c}), getFront(), DeleteRear(), Insertfront(${d}), InsertRear(${e}), getRear(), display(), Deletefront(), DeleteRear(), Deletefront(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), InsertRear(${b}), Insertfront(${c}), getRear(), Deletefront(), Insertfront(${d}), InsertRear(${e}), display(), getFront(), DeleteRear(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `InsertRear(${a}), InsertRear(${b}), Insertfront(${c}), getRear(), Deletefront(), Insertfront(${d}), InsertRear(${e}), display(), DeleteRear(), getFront(), Deletefront(), DeleteRear(), IsEmpty(), IsFull(), Exit.`,
+        `Insertfront(${a}), InsertRear(${b}), InsertRear(${c}), DeleteRear(), Insertfront(${d}), InsertRear(${e}), getFront(), display(), Deletefront(), getRear(), DeleteRear(), Deletefront(), IsEmpty(), IsFull(), Exit.`
+      ];
+      const variation = seed % 15;
+      return { values, variation: variation + 1, trace: traces[variation] };
+    }
+
     function addWrapped(doc, text, x, y, maxWidth, lineHeight = 6) {
       const lines = doc.splitTextToSize(text, maxWidth);
       doc.text(lines, x, y);
@@ -303,9 +351,12 @@ int main(void) {
     function addSection(doc, title, body, y) {
       if (y > 255) { doc.addPage(); y = 20; }
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.setTextColor(45, 55, 72);
+      doc.setFontSize(reportTheme.headingSize);
+      doc.setTextColor(...reportTheme.accent);
       doc.text(title, 18, y);
+      doc.setDrawColor(...reportTheme.accent);
+      doc.setLineWidth(0.45);
+      doc.line(18, y + 1.5, 27 + reportTheme.ruleWidth, y + 1.5);
       y += 7;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
@@ -327,6 +378,12 @@ int main(void) {
       const date = document.getElementById('date').value.trim();
       const language = document.getElementById('language').value;
       if (!name || !roll || !branch || !course || !date) return;
+      const studentExample = makeStudentExample(roll);
+      reportTheme = {
+        ...reportThemes[studentExample.variation - 1],
+        headingSize: 11 + (studentExample.variation % 3),
+        ruleWidth: (studentExample.variation % 5) * 2
+      };
 
       const btn = document.getElementById('downloadBtn');
       btn.disabled = true;
@@ -337,13 +394,26 @@ int main(void) {
         const pageWidth = 210;
         let y = 20;
 
-        doc.setFillColor(30, 41, 59);
-        doc.rect(0, 0, pageWidth, 45, 'F');
-        doc.setTextColor(255, 255, 255);
+        const coverStyle = (studentExample.variation - 1) % 3;
+        if (coverStyle === 1) {
+          doc.setFillColor(...reportTheme.light);
+          doc.rect(0, 0, pageWidth, 45, 'F');
+          doc.setFillColor(...reportTheme.accent);
+          doc.rect(0, 0, 7, 45, 'F');
+          doc.setTextColor(...reportTheme.primary);
+        } else {
+          doc.setFillColor(...reportTheme.primary);
+          doc.rect(0, 0, pageWidth, 45, 'F');
+          if (coverStyle === 2) {
+            doc.setFillColor(...reportTheme.accent);
+            doc.rect(0, 40, pageWidth, 5, 'F');
+          }
+          doc.setTextColor(255, 255, 255);
+        }
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
         doc.text('DATA STRUCTURE LAB · CSL-302', 18, 15);
-        doc.setFontSize(18);
+        doc.setFontSize(coverStyle === 1 ? 16 : 18);
         doc.text('DOUBLE ENDED QUEUE USING ARRAY', 18, 26);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
@@ -353,6 +423,7 @@ int main(void) {
         doc.setTextColor(31, 41, 55);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
+        doc.setTextColor(...reportTheme.accent);
         doc.text('Student details', 18, y); y += 8;
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
@@ -378,16 +449,17 @@ int main(void) {
         y = addSection(doc, '11. display()', 'Purpose: print all Deque elements from front to rear. Parameters: none. Return value: usually none/void. Logic: check IsEmpty(); if not empty, start at front and move circularly until rear is reached, printing each element. A circular traversal must wrap from MAX - 1 to 0 when necessary.', y);
         y = addSection(doc, '12. main() and menu loop', 'Purpose: control program execution and let the user choose an operation. Parameters: none (int main(void)). Return value: 0 on normal exit. Logic: repeatedly display the menu, read the choice, dispatch to the selected function, handle invalid choices, and stop when Exit is selected. Every function, including main, contains exactly one printf statement that prints the student’s roll number and name, as required by the assignment.', y);
         y = addSection(doc, '13. Menu options', '1. Insertfront()  |  2. InsertRear()  |  3. Deletefront()  |  4. DeleteRear()  |  5. getRear()  |  6. getFront()  |  7. display()  |  8. IsEmpty()  |  9. IsFull()  |  10. Exit.', y);
-        y = addSection(doc, '14. Time complexity', 'Insertion, deletion, getFront, getRear, IsEmpty, and IsFull take O(1) time when implemented with front/rear indices. Display takes O(n) time because it visits each stored element. The array uses O(MAX) space, where MAX is the fixed capacity.', y);
-        y = addSection(doc, '15. Testing checklist', 'Test insertion into an empty Deque; insertion at both ends; deletion from both ends; getFront/getRear on a non-empty Deque; display after multiple operations; deletion and access on an empty Deque; insertion until full; circular wrap-around; invalid menu choice; and Exit. Confirm that the output and boundary conditions match your own C source code.', y);
-        y = addSection(doc, '16. Conclusion', 'The array-based Deque supports insertion and deletion at both ends. Circular index updates allow efficient use of the array, while empty/full checks prevent invalid operations. Review this report against your actual program before submission.', y);
+        y = addSection(doc, `14. Personal worked example · Variation ${studentExample.variation} of 15`, `This example is generated from roll number ${roll}, so each roll gets its own input values and trace. Values used: ${studentExample.values.join(', ')}. Follow this menu sequence in order: ${studentExample.trace} Access operations leave the deque unchanged; insertions add at the named end; deletions remove from that end. Compare display() and IsEmpty() with the state of the deque as you work through the sequence.`, y);
+        y = addSection(doc, '15. Time complexity', 'Insertion, deletion, getFront, getRear, IsEmpty, and IsFull take O(1) time when implemented with front/rear indices. Display takes O(n) time because it visits each stored element. The array uses O(CAPACITY) space, where CAPACITY is the fixed array size.', y);
+        y = addSection(doc, '16. Testing checklist', 'Test insertion into an empty Deque; insertion at both ends; deletion from both ends; getFront/getRear on a non-empty Deque; display after multiple operations; deletion and access on an empty Deque; insertion until full; circular wrap-around; invalid menu choice; and Exit. Confirm that the output and boundary conditions match your own source code.', y);
+        y = addSection(doc, '17. Conclusion', 'The array-based Deque supports insertion and deletion at both ends. Circular index updates allow efficient use of the array, while empty/full checks prevent invalid operations. Review this report against your generated source before submission.', y);
 
         const pages = doc.getNumberOfPages();
         for (let p = 1; p <= pages; p++) {
           doc.setPage(p);
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(8);
-          doc.setTextColor(120, 130, 145);
+          doc.setTextColor(...reportTheme.accent);
           doc.text(`${roll} · ${name}`, 18, 287);
           doc.text(`Page ${p} of ${pages}`, 192, 287, { align: 'right' });
         }
